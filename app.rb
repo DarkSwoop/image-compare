@@ -20,9 +20,20 @@ put '/update/:id' do
   {:success => true}.to_json
 end
 
+post '/import_csv' do
+  tempfile_path = params[:csv_file].path
+  csv_data = File.read(File.join(File.dirname(__FILE__), file_name))
+  Image.import_from_csv(csv_data)
+  redirect to('/')
+end
+
 get '/next/:count' do
   content_type :json
 
   @images = Image.next_unapproved(params[:count], params[:last_id])
+  @images.map do |image|
+    image.url.sub!('http://www.qype.com/', "http://ecdn#{rand(3)}.qypecdn.net/").sub!(/(.*_)original(\.\w+)$/, '\1xlarge\2')
+    image
+  end
   @images.to_json
 end

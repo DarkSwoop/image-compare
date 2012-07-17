@@ -4,7 +4,7 @@ var _listCount = 20,
 
 var appendImages = function (data) {
   $(data).each(function (index, image) {
-    var listItem = '<li data-image-id="' + image.image.id + '"><img src="' + image.image.url + '" /></li>';
+    var listItem = '<li data-image-id="' + image.image.id + '"><img width="500" src="' + image.image.url + '" /></li>';
     $('#images').append(listItem);
     _imageIds.push(image.image.id);
   });
