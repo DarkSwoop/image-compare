@@ -92,14 +92,13 @@ $('.declined[data-image-id]').live('click',function () {
   updateImage(1, $(this).data('image-id'));
   listItem = $(this).closest('li');
   evaluateApprovedClass(listItem, false);
-  toggleUndoHandle();
+  setTimeout(toggleUndoHandle, 200);
 });
 $('.accepted[data-image-id]').live('click',function () {
   updateImage(0, $(this).data('image-id'));
   listItem = $(this).closest('li');
-  console.log(listItem)
   evaluateApprovedClass(listItem, true);
-  toggleUndoHandle();
+  setTimeout(toggleUndoHandle, 200);
 });
 
 var toggleUndoHandle = function () {
@@ -108,7 +107,6 @@ var toggleUndoHandle = function () {
     $('#undo .handle').toggleClass('opened');
   }
 };
-
 
 $('#undo .handle').click(function () {
   toggleUndoHandle();
