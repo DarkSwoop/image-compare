@@ -131,7 +131,6 @@ $(document).keyup(function (event) {
 });
 
 $(document).keypress(function (event) {
-  // enter => decline
   if (event.keyCode == 13 || event.keyCode == 32) {
     event.preventDefault();
     event.stopPropagation();
@@ -140,7 +139,4 @@ $(document).keypress(function (event) {
 });
 
 $.getJSON('/next/' + _listCount, appendImages);
-
-
-
 

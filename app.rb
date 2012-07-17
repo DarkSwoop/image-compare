@@ -21,9 +21,9 @@ put '/update/:id' do
 end
 
 post '/import_csv' do
-  tempfile_path = params[:csv_file].path
-  csv_data = File.read(File.join(File.dirname(__FILE__), file_name))
-  Image.import_from_csv(csv_data)
+  tempfile_path = params[:csv_file][:tempfile].path
+  csv_data = File.read(tempfile_path)
+  Image.import_from_csv(csv_data, "#{params[:csv_file][:filename].gsub(/[^\w]/, '-').sub(/\..*?$/,'')}-#{Time.now.strftime("%Y%m%d%H%M")}")
   redirect to('/')
 end
 

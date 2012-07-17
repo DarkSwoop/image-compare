@@ -10,6 +10,9 @@
       %header
         %h1
           Image Tag
+          %form#upload{:method => 'POST', :action => '/import_csv', :enctype => 'multipart/form-data'}
+            %input{:type => 'file', :name => 'csv_file'}
+            %input{:type => 'submit', :value => 'upload'}
           %span#remaining
             remaining:
             %span#remaining-count= @count

@@ -85,6 +85,10 @@ header h1 {
 
 }
 
+#upload {
+  display:inline;
+}
+
 #undo-list .is-approved {
   background: #a1eea4;
 }

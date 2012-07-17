@@ -1,5 +1,6 @@
 require 'active_record'
 require 'yaml'
+require 'fastercsv'
 
 class Image < ActiveRecord::Base
   scope :next_unapproved, lambda{ |count, last_id|
@@ -9,7 +10,7 @@ class Image < ActiveRecord::Base
     sql.order('id ASC').limit(count)
   }
 
-  def self.import_from_csv(csv_data, source="de")
+  def self.import_from_csv(csv_data,source)
 
 # 40567,
 # "Landgasthof  Alte Papiermühle"
