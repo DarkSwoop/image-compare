@@ -2,9 +2,8 @@ require 'models/image'
 require 'sinatra'
 require 'json'
 
-configure :production, :development do
-  enable :logging
-end
+database_configuration = YAML.load(File.read(File.join(settings.root, 'database.yml')))
+ActiveRecord::Base.establish_connection(database_configuration)
 
 get '/' do
   @accepted_count = Image.where(:approved => true).count

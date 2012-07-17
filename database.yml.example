@@ -1,0 +1,6 @@
+database: ''
+host: 'localhost'
+user: 'root'
+password: ''
+encoding: 'utf8'
+adapter: 'mysql'

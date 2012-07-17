@@ -1,13 +1,5 @@
 require 'active_record'
-
-ActiveRecord::Base.establish_connection(
-  :database => 'qype_image_tag_development',
-  :host => 'localhost',
-  :user => 'root',
-  :password => '',
-  :encoding => 'utf8',
-  :adapter => 'mysql'
-)
+require 'yaml'
 
 class Image < ActiveRecord::Base
   scope :next_unapproved, lambda{ |count, last_id|
