@@ -57,7 +57,7 @@ class Image < ActiveRecord::Base
           :place_country => row[row_indeces[:place_country]],
           :place_phone => row[row_indeces[:place_phone]],
           :place_url => row[row_indeces[:place_url]],
-          :place_category => row[row_indeces[:place_url]],
+          :place_category => row[row_indeces[:place_category]],
           :source => source
         )
       end
