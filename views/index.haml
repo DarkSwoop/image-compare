@@ -1,0 +1,28 @@
+!!! 5
+%html
+  %head
+    %title Image Tag
+    %link{:rel => 'stylesheet', :href => '/stylesheets/reset.css', :type => 'text/css'}
+    %link{:rel => 'stylesheet', :href => '/stylesheets/image-tag.css', :type => 'text/css'}
+  %body{:"data-accepted" => @accepted_count, :"data-declined" => @declined_count, :"data-count" => @count, :"data-ips-count" => 0}
+    #container
+      %header
+        %h1
+          Image Tag
+          %span#remaining
+            remaining:
+            %span#remaining-count= @count
+      #buttons
+        %button#accepted
+          no face
+          %br
+          %span.score= @accepted_count 
+        %button#declined
+          FACE!
+          %br
+          %span.score= @declined_count
+        
+      %ul#images
+      #overlay
+    %script{:src => '/javascripts/jquery.min.js', :type => 'text/javascript'}
+    %script{:src => '/javascripts/image-tag.js', :type => 'text/javascript'}
