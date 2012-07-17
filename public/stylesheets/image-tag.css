@@ -33,7 +33,8 @@ header h1 {
   padding: 5px;
   margin: 0 auto;
   margin-bottom: 20px;
-  width: 940px;
+  width: 930px;
+  border-radius: 7px;
 }
 
 #undo li {
@@ -43,6 +44,7 @@ header h1 {
 
 .undo-image {
   vertical-align: middle;
+  border: 1px solid #ccc;
 }
 
 #undo .handle {
@@ -79,7 +81,23 @@ header h1 {
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
+  list-style-type: none;
 
+}
+
+#undo-list .is-approved {
+  background: #a1eea4;
+}
+
+#undo-list .is-declined {
+  background: #eeb5b3;
+}
+
+#undo-list .is-declined .declined {
+  display:none;
+}
+#undo-list .is-approved .accepted {
+  display:none;
 }
 
 #remaining {
@@ -108,7 +126,7 @@ button {
 
 #buttons button {
   width: 450px;
-  height: 200px;
+  height: 150px;
   font-size: 40px;
 }
 
@@ -147,8 +165,6 @@ button {
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
-
-
 }
 
 #images:empty {

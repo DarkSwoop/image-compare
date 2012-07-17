@@ -9,7 +9,7 @@ class Image < ActiveRecord::Base
     sql.order('id ASC').limit(count)
   }
 
-  def self.import_from_csv(csv_data)
+  def self.import_from_csv(csv_data, source="de")
 
 # 40567,
 # "Landgasthof  Alte Papiermühle"
@@ -56,7 +56,8 @@ class Image < ActiveRecord::Base
           :place_country => row[row_indeces[:place_country]],
           :place_phone => row[row_indeces[:place_phone]],
           :place_url => row[row_indeces[:place_url]],
-          :place_category => row[row_indeces[:place_url]]
+          :place_category => row[row_indeces[:place_url]],
+          :source => source
         )
       end
     end

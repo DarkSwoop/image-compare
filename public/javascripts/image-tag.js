@@ -19,12 +19,21 @@ var appendImages = function (data) {
   });
 };
 
-var addToUndoList = function (image) {
+var addToUndoList = function (image, approved) {
   var undoList = $('#undo-list');
-  undoList.prepend('<li><img class="undo-image" height="200" src="' + image.data('image-url') + '" /><button class="declined" data-image-id="' + image.data('image-id') + '">FACE!</button><button class="accepted" data-image-id="' + image.data("image-id") + '">no face</button></li>');
+  listItem = $('<li><img class="undo-image" height="200" src="' + image.data('image-url') + '" /><button class="declined" data-image-id="' + image.data('image-id') + '">FACE!</button><button class="accepted" data-image-id="' + image.data("image-id") + '">no face</button></li>');
+  undoList.prepend(evaluateApprovedClass(listItem, approved));
   while (undoList.children().length > 10) {
     undoList.children().last().remove();
   }
+};
+
+var evaluateApprovedClass = function (listItem, approved) {
+  approvedClass = approved ? 'is-approved' : 'is-declined';
+  $(listItem).removeClass('is-declined');
+  $(listItem).removeClass('is-approved');
+  $(listItem).addClass(approvedClass);
+  return listItem;
 };
 
 var updateImage = function (approved, imageId) {
@@ -34,7 +43,7 @@ var updateImage = function (approved, imageId) {
     if (imageItem.length === 0) return false;
     $.post('/update/' + imageId, {approved: approved, _method: 'PUT'}, function (data) {
       updateImageList(imageId);
-      addToUndoList(imageItem);
+      addToUndoList(imageItem, approved);
       increaseScore(approved);
     });
     imageItem.slideUp('fast', function () {
@@ -81,16 +90,23 @@ $('#declined').click(function () {
 
 $('.declined[data-image-id]').live('click',function () {
   updateImage(1, $(this).data('image-id'));
+  listItem = $(this).closest('li');
+  evaluateApprovedClass(listItem, false);
   toggleUndoHandle();
 });
 $('.accepted[data-image-id]').live('click',function () {
   updateImage(0, $(this).data('image-id'));
+  listItem = $(this).closest('li');
+  console.log(listItem)
+  evaluateApprovedClass(listItem, true);
   toggleUndoHandle();
 });
 
 var toggleUndoHandle = function () {
-  $('#undo-list').slideToggle('fast');
-  $('#undo .handle').toggleClass('opened');
+  if ($('#undo-list li').length > 0) {
+    $('#undo-list').slideToggle('fast');
+    $('#undo .handle').toggleClass('opened');
+  }
 };
 
 
