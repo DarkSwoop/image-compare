@@ -6,6 +6,7 @@
     %link{:rel => 'stylesheet', :href => '/stylesheets/image-tag.css', :type => 'text/css'}
   %body{:"data-accepted" => @accepted_count, :"data-declined" => @declined_count, :"data-count" => @count, :"data-ips-count" => 0}
     #container
+      #flash{:style => 'display:none;'}
       %header
         %h1
           Image Tag
@@ -21,6 +22,11 @@
           FACE!
           %br
           %span.score= @declined_count
+      %section#undo
+        %h2.handle
+          Undo
+          %span.close-button x
+        %ul#undo-list{:style => "display:none"}
         
       %ul#images
       #overlay

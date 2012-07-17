@@ -2,25 +2,49 @@ var _listCount = 20,
     _updateImageListThreshold = 10,
     _imageIds = [];
 
+var flash = function (message) {
+  flashDiv = $('#flash');
+  flashDiv.html(message);
+  flashDiv.slideDown('fast');
+  setTimeout(function () {
+    flashDiv.slideUp('fast');
+  }, 3000);
+};
+
 var appendImages = function (data) {
   $(data).each(function (index, image) {
-    var listItem = '<li data-image-id="' + image.image.id + '"><img width="500" src="' + image.image.url + '" /></li>';
+    var listItem = '<li data-image-url="' + image.image.url + '" data-image-id="' + image.image.id + '"><img width="500" src="' + image.image.url + '" /></li>';
     $('#images').append(listItem);
     _imageIds.push(image.image.id);
   });
 };
 
-var updateImage = function (approved) {
-  var imageId = _imageIds.shift();
-  var imageItem = $('#images li[data-image-id=' + imageId + ']');
-  if (imageItem.length === 0) return false;
-  $.post('/update/' + imageId, {approved: approved, _method: 'PUT'}, function (data) {
-    updateImageList(imageId);
-    increaseScore(approved);
-  });
-  imageItem.slideUp('fast', function () {
-    imageItem.remove();
-  });
+var addToUndoList = function (image) {
+  var undoList = $('#undo-list');
+  undoList.prepend('<li><img class="undo-image" height="200" src="' + image.data('image-url') + '" /><button class="declined" data-image-id="' + image.data('image-id') + '">FACE!</button><button class="accepted" data-image-id="' + image.data("image-id") + '">no face</button></li>');
+  while (undoList.children().length > 10) {
+    undoList.children().last().remove();
+  }
+};
+
+var updateImage = function (approved, imageId) {
+  if (typeof imageId === 'undefined') {
+    imageId = _imageIds.shift();
+    var imageItem = $('#images li[data-image-id=' + imageId + ']');
+    if (imageItem.length === 0) return false;
+    $.post('/update/' + imageId, {approved: approved, _method: 'PUT'}, function (data) {
+      updateImageList(imageId);
+      addToUndoList(imageItem);
+      increaseScore(approved);
+    });
+    imageItem.slideUp('fast', function () {
+      imageItem.remove();
+    });
+  } else {
+    $.post('/update/' + imageId, {approved: approved, _method: 'PUT'}, function (data) {
+      flash('Notice: Image updated.');
+    });
+  }
   return false;
 };
 
@@ -53,6 +77,25 @@ $('#accepted').click(function () {
 
 $('#declined').click(function () {
   updateImage(0);
+});
+
+$('.declined[data-image-id]').live('click',function () {
+  updateImage(1, $(this).data('image-id'));
+  toggleUndoHandle();
+});
+$('.accepted[data-image-id]').live('click',function () {
+  updateImage(0, $(this).data('image-id'));
+  toggleUndoHandle();
+});
+
+var toggleUndoHandle = function () {
+  $('#undo-list').slideToggle('fast');
+  $('#undo .handle').toggleClass('opened');
+};
+
+
+$('#undo .handle').click(function () {
+  toggleUndoHandle();
 });
 
 $(document).keyup(function (event) {

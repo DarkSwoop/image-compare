@@ -7,8 +7,17 @@ body {
   width: 960px;
   left: 50%;
   margin-left: -480px;
-  height: 1000px;
   overflow: hidden;
+}
+
+#flash {
+  position: fixed;
+  top: 30px;
+  right: 40px;
+  border: 1px solid #dbdf69;
+  background: #fbff78;
+  margin: 10px;
+  padding: 10px;
 }
 
 header h1 {
@@ -18,6 +27,60 @@ header h1 {
   line-height: 57px;
   margin-bottom: 20px;
 }
+#undo {
+  border: 1px solid #CCC;
+  background: white;
+  padding: 5px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  width: 940px;
+}
+
+#undo li {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
+
+.undo-image {
+  vertical-align: middle;
+}
+
+#undo .handle {
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  display: block;
+  line-height: 40px;
+  height: 40px;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  cursor: pointer;
+  position: relative;
+}
+
+#undo .handle .close-button {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top:10px;
+  line-height: 24px;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+}
+
+#undo .handle.opened .close-button {
+  display: block;
+}
+
+#undo-list {
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+}
 
 #remaining {
   float:right;
@@ -26,17 +89,36 @@ header h1 {
 #buttons {
   overflow: hidden;
   margin: 0 auto;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   width: 940px;
 }
+
 button {
   display: inline-block;
-  width: 450px;
-  height: 200px;
-  font-size: 40px;
   font-weight: bolder;
   border-radius: 7px;
   box-shadow: none;
+}
+
+#undo button {
+  padding: 20px;
+  font-size: 30px;
+  float: right;
+}
+
+#buttons button {
+  width: 450px;
+  height: 200px;
+  font-size: 40px;
+}
+
+.accepted {
+  background: #009d1c;
+  border-color: #560b03;
+}
+.declined {
+  background: #b9160c;
+  border-color: #005610;
 }
 
 #accepted {
@@ -60,6 +142,13 @@ button {
   box-shadow:         0 0 9px rgba(50, 50, 50, 0.75);
   padding-top: 10px;
   min-height: 630px;
+  height: 1000px;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+
 }
 
 #images:empty {
