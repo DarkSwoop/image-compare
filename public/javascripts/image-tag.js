@@ -141,5 +141,5 @@ $(document).keypress(function (event) {
   }
 });
 
-$.getJSON('/next/' + _listCount, appendImages);
+updateImageList();
 

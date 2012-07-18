@@ -7,7 +7,7 @@ class Image < ActiveRecord::Base
     count ||= 10
     sql = where('approved IS NULL').scoped
     sql = sql.where("id NOT IN (?)", ids.split(',')).scoped unless ids.blank?
-    sources_to_exclude = exclude_sources_higher_than(count)
+    sources_to_exclude = exclude_sources_higher_than(exclude_threshold_count)
     sql = sql.where("source NOT IN (?)", sources_to_exclude).scoped unless sources_to_exclude.empty?
     sql.order('id ASC').group('place_id').limit(count)
   }
