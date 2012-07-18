@@ -3,10 +3,10 @@ require 'yaml'
 require 'fastercsv'
 
 class Image < ActiveRecord::Base
-  scope :next_unapproved, lambda{ |count, last_id|
+  scope :next_unapproved, lambda{ |count, ids|
     count ||= 10
     sql = where('approved IS NULL').scoped
-    sql = sql.where("id > ?", last_id).scoped unless last_id.blank?
+    sql = sql.where("id NOT IN (?)", ids.split(',')).scoped unless ids.blank?
     sources_to_exclude = exclude_sources_higher_than(count)
     sql = sql.where("source NOT IN (?)", sources_to_exclude).scoped unless sources_to_exclude.empty?
     sql.order('id ASC').group('place_id').limit(count)
