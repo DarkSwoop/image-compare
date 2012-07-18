@@ -23,7 +23,7 @@ class Image < ActiveRecord::Base
 
   def self.approved_source_counts
     result = self.connection.execute(<<-EOS
-      SELECT source, count(*)
+      SELECT source, count(distinct place_id)
       FROM images
       WHERE approved = true
       GROUP BY source
