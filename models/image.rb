@@ -36,10 +36,10 @@ class Image < ActiveRecord::Base
     counts
   end
 
-  def self.exclude_sources_higher_than(count)
+  def self.exclude_sources_higher_than(source_count_threshold)
     sources_to_exclude = []
     approved_source_counts.each_pair do |source, count|
-      sources_to_exclude << source if count.to_i > count.to_i
+      sources_to_exclude << source if count.to_i > source_count_threshold.to_i
     end
     sources_to_exclude
   end
