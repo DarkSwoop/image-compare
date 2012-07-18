@@ -8,7 +8,7 @@ ActiveRecord::Base.establish_connection(database_configuration)
 get '/' do
   @accepted_count = Image.where(:approved => true).count
   @declined_count = Image.where(:approved => false).count
-  @count = Image.where('approved IS NULL').count
+  @count = Image.images_left(200)
   haml :index
 end
 
@@ -35,5 +35,5 @@ get '/next/:count' do
     image.url.sub!('http://www.qype.com/', "http://ecdn#{rand(3)}.qypecdn.net/").sub!(/(.*_)original(\.\w+)$/, '\1xlarge\2')
     image
   end
-  @images.to_json
+  {:images => @images, :remaining => Image.images_left(200)}.to_json
 end

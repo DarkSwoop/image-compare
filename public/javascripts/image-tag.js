@@ -12,11 +12,14 @@ var flash = function (message) {
 };
 
 var appendImages = function (data) {
-  $(data).each(function (index, image) {
+  images = data.images;
+  remaining = data.remaining;
+  $(images).each(function (index, image) {
     var listItem = '<li data-image-url="' + image.image.url + '" data-image-id="' + image.image.id + '"><img width="500" src="' + image.image.url + '" /></li>';
     $('#images').append(listItem);
     _imageIds.push(image.image.id);
   });
+  $('#remaining-count').html(remaining);
 };
 
 var addToUndoList = function (image, approved) {
@@ -74,9 +77,9 @@ var increaseScore = function (approved) {
   var newScore = Number($('body').data(name)) + 1;
   $('body').data(name, newScore);
 
-  ipsCount = $('body').data('ips-count');
-  $('body').data('ips-count', Number(ipsCount) + 1);
-  $('#remaining-count').html($('body').data('count') - (ipsCount + 1));
+  // ipsCount = $('body').data('ips-count');
+  // $('body').data('ips-count', Number(ipsCount) + 1);
+  // $('#remaining-count').html($('body').data('count') - (ipsCount + 1));
   $("#" + name + " .score").html(newScore);
 };
 

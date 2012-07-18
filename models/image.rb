@@ -7,24 +7,44 @@ class Image < ActiveRecord::Base
     count ||= 10
     sql = where('approved IS NULL').scoped
     sql = sql.where("id > ?", last_id).scoped unless last_id.blank?
-    sql.order('id ASC').limit(count)
+    sources_to_exclude = exclude_sources_higher_than(count)
+    sql = sql.where("source NOT IN (?)", sources_to_exclude).scoped unless sources_to_exclude.empty?
+    sql.order('id ASC').group('place_id').limit(count)
   }
 
+  def self.images_left(exclude_threshold)
+    sources_to_exclude = Image.exclude_sources_higher_than(exclude_threshold)
+    if sources_to_exclude.empty?
+      Image.where('approved IS NULL').count
+    else
+      Image.where('approved IS NULL AND source NOT IN (?)', sources_to_exclude).count
+    end
+  end
+
+  def self.approved_source_counts
+    result = self.connection.execute(<<-EOS
+      SELECT source, count(*)
+      FROM images
+      WHERE approved = true
+      GROUP BY source
+    EOS
+    )
+    counts = {}
+    result.each do |row|
+      counts[row[0]] = row[1]
+    end
+    counts
+  end
+
+  def self.exclude_sources_higher_than(count)
+    sources_to_exclude = []
+    approved_source_counts.each_pair do |source, count|
+      sources_to_exclude << source if count.to_i > count.to_i
+    end
+    sources_to_exclude
+  end
+
   def self.import_from_csv(csv_data,source)
-
-# 40567,
-# "Landgasthof  Alte Papiermühle"
-# "Oberurseler Weg 21"
-# "Frankfurt am Main"
-# "Germany"
-# "069 95770702"
-# "http://www.Landgasthof-alte-papiermuehle.de"
-# "Eating & Drinking"
-# "2246576;2235431;2230613;2230606;1849631;1849626;1849621;1849618;1816999;1816998;1637967;1637962;1637957;1637956;1637953;1637950;1637942;1477445;1477444;1444046"
-# "http://www.qype.com/uploads/photos/0224/6576/smiley_bild_1_original.jpg;http://www.qype.com/uploads/photos/0223/5431/valentinstag-0143_original
-
-
-
 
     row_indeces = {
       :place_id => 0,
