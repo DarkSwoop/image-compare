@@ -30,7 +30,7 @@ end
 get '/next/:count' do
   content_type :json
 
-  @images = Image.next_unapproved(params[:count], params[:last_id])
+  @images = Image.next_unapproved(params[:count], params[:ids], params[:exclude_threshold_count])
   @images.map do |image|
     image.url.sub!('http://www.qype.com/', "http://ecdn#{rand(3)}.qypecdn.net/").sub!(/(.*_)original(\.\w+)$/, '\1xlarge\2')
     image

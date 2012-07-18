@@ -3,7 +3,7 @@ require 'yaml'
 require 'fastercsv'
 
 class Image < ActiveRecord::Base
-  scope :next_unapproved, lambda{ |count, ids|
+  scope :next_unapproved, lambda{ |count, ids, exclude_threshold_count|
     count ||= 10
     sql = where('approved IS NULL').scoped
     sql = sql.where("id NOT IN (?)", ids.split(',')).scoped unless ids.blank?
