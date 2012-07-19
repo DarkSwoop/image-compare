@@ -117,7 +117,7 @@ class Image < ActiveRecord::Base
       place_id = row[row_indeces[:place_id]]
       urls_with_ids = photo_ids.zip(urls)
       urls_with_ids.each do |id_url_pair|
-        create!(
+        create(
           :photo_id => id_url_pair[0],
           :url => id_url_pair[1],
           :place_id => row[row_indeces[:place_id]],
