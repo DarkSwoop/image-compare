@@ -83,6 +83,7 @@ class Image < ActiveRecord::Base
     result = self.connection.execute(<<-EOS
       select source, count(distinct place_id) as places
       from images
+      where approved = true
       group by source
       having places < #{source_count_threshold.to_i}
     EOS
