@@ -23,7 +23,7 @@ end
 post '/import_csv' do
   tempfile_path = params[:csv_file][:tempfile].path
   csv_data = File.read(tempfile_path)
-  Image.import_from_csv(csv_data, "#{params[:csv_file][:filename].gsub(/[^\w]/, '-').sub(/\..*?$/,'')}-#{Time.now.strftime("%Y%m%d%H%M")}")
+  Image.import_from_csv(csv_data, "#{params[:csv_file][:filename].gsub(/[^\w]/, '-').sub(/\..*?$/,'')}-#{Time.now.strftime("%Y%m%d%H%M")}", params[:source_name].upcase)
   redirect to('/')
 end
 

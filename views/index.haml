@@ -12,6 +12,7 @@
           Image Tag
           %form#upload{:method => 'POST', :action => '/import_csv', :enctype => 'multipart/form-data'}
             %input{:type => 'file', :name => 'csv_file'}
+            %input{:type => 'text', :name => 'source_name'}
             %input{:type => 'submit', :value => 'upload'}
           %span#remaining
             remaining:

@@ -4,12 +4,12 @@ require 'fastercsv'
 
 class Image < ActiveRecord::Base
 
-def self.next_unapproved(count, ids, threshold_count, exclude_place_ids)
+def self.next_unapproved(count, ids, threshold_count)
   images = []
   id_clause = "and id not in (#{ids})" unless ids.blank?
   sources_lower_than(threshold_count).each do |source|
     break if images.size >= count.to_i
-    images << self.find_by_sql("select * from images where approved is null and source = '#{source}' and place_id not in (select distinct place_id from images where approved = true and source ='#{source}') and id not in (select distinct id from images where approved = true and source = '#{source}') #{id_clause} group by place_id order by id limit #{count};")
+    images << self.find_by_sql("select * from images where approved is null and source = '#{source}' and place_id not in (select distinct place_id from images where approved = true) #{id_clause} group by place_id order by id limit #{count};")
   end
   images.flatten[0..(count.to_i-1)]
 end
@@ -23,11 +23,42 @@ end
     end
   end
 
+  def self.not_satisfied_sources(below_)
+    
+    result = self.connection.execute(<<-EOS
+      select source, count(distinct place_id) as places
+      from images
+      group by source
+      having places < 200
+    EOS
+    )
+    counts = {}
+    result.each do |row|
+      counts[row[0]] = row[1]
+    end
+    counts
+  end
+
   def self.approved_source_counts
     result = self.connection.execute(<<-EOS
       SELECT source, count(distinct place_id)
       FROM images
       WHERE approved = true
+      GROUP BY source
+    EOS
+    )
+    counts = {}
+    result.each do |row|
+      counts[row[0]] = row[1]
+    end
+    counts
+  end
+
+  def self.unapproved_source_counts
+    result = self.connection.execute(<<-EOS
+      SELECT source, count(distinct place_id)
+      FROM images
+      WHERE approved IS NULL
       GROUP BY source
     EOS
     )
@@ -48,14 +79,21 @@ end
 
 
   def self.sources_lower_than(source_count_threshold)
+    result = self.connection.execute(<<-EOS
+      select source, count(distinct place_id) as places
+      from images
+      group by source
+      having places < #{source_count_threshold.to_i}
+    EOS
+    )
     sources = []
-    approved_source_counts.each_pair do |source, count|
-      sources << source if count.to_i < source_count_threshold.to_i
+    result.each do |row|
+      sources << row[0]
     end
-    sources
+    sources.flatten
   end
 
-  def self.import_from_csv(csv_data,source)
+  def self.import_from_csv(csv_data,file_name,source)
 
     row_indeces = {
       :place_id => 0,
@@ -73,8 +111,8 @@ end
     csv_parser = FasterCSV.new(csv_data, :encoding => 'u')
 
     csv_parser.each do |row|
-      urls = row[row_indeces[:urls]].split(';')
-      photo_ids = row[row_indeces[:photo_ids]].split(';')
+      urls = row[row_indeces[:urls]].to_a.split(';')
+      photo_ids = row[row_indeces[:photo_ids]].to_a.split(';')
       place_id = row[row_indeces[:place_id]]
       urls_with_ids = photo_ids.zip(urls)
       urls_with_ids.each do |id_url_pair|
@@ -89,7 +127,8 @@ end
           :place_phone => row[row_indeces[:place_phone]],
           :place_url => row[row_indeces[:place_url]],
           :place_category => row[row_indeces[:place_category]],
-          :source => source
+          :source => source,
+          :import => file_name
         )
       end
     end
