@@ -40,3 +40,8 @@ get '/next/:count' do
   end
   {:images => @images, :remaining => Image.images_left(200)}.to_json
 end
+
+get '/export/:source.csv' do
+  attachment "#{params[:source].to_s}.csv"
+  Image.export_csv_for(params[:source])
+end

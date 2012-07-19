@@ -137,5 +137,17 @@ class Image < ActiveRecord::Base
 
   end
 
+  def prepared_csv_array
+    [place_id, place_name, place_address, place_city, place_country, place_phone, place_url, place_category, url].map(&:to_s)
+  end
+
+  def self.export_csv_for(source)
+    FasterCSV.generate do |csv|
+      self.where('approved = true').where('source = ?', source.to_s.upcase).all.each do |image|
+        csv << image.prepared_csv_array
+      end
+    end
+  end
+
 
 end
