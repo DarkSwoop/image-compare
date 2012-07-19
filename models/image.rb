@@ -3,14 +3,16 @@ require 'yaml'
 require 'fastercsv'
 
 class Image < ActiveRecord::Base
-  scope :next_unapproved, lambda{ |count, ids, exclude_threshold_count|
-    count ||= 10
-    sql = where('approved IS NULL').scoped
-    sql = sql.where("id NOT IN (?)", ids.split(',')).scoped unless ids.blank?
-    sources_to_exclude = exclude_sources_higher_than(exclude_threshold_count)
-    sql = sql.where("source NOT IN (?)", sources_to_exclude).scoped unless sources_to_exclude.empty?
-    sql.order('id ASC').group('place_id').limit(count)
-  }
+
+def self.next_unapproved(count, ids, threshold_count, exclude_place_ids)
+  images = []
+  id_clause = "and id not in (#{ids})" unless ids.blank?
+  sources_lower_than(threshold_count).each do |source|
+    break if images.size >= count.to_i
+    images << self.find_by_sql("select * from images where approved is null and source = '#{source}' and place_id not in (select distinct place_id from images where approved = true and source ='#{source}') and id not in (select distinct id from images where approved = true and source = '#{source}') #{id_clause} group by place_id order by id limit #{count};")
+  end
+  images.flatten[0..(count.to_i-1)]
+end
 
   def self.images_left(exclude_threshold)
     sources_to_exclude = Image.exclude_sources_higher_than(exclude_threshold)
@@ -42,6 +44,15 @@ class Image < ActiveRecord::Base
       sources_to_exclude << source if count.to_i > source_count_threshold.to_i
     end
     sources_to_exclude
+  end
+
+
+  def self.sources_lower_than(source_count_threshold)
+    sources = []
+    approved_source_counts.each_pair do |source, count|
+      sources << source if count.to_i < source_count_threshold.to_i
+    end
+    sources
   end
 
   def self.import_from_csv(csv_data,source)
