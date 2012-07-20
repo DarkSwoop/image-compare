@@ -12,7 +12,7 @@ class Image < ActiveRecord::Base
       break if images.size >= count.to_i
       images << self.find_by_sql("select * from images where approved is null and source = '#{source}' and place_id not in (select distinct place_id from images where approved = true) #{id_clause} group by place_id order by id limit #{count};")
     end
-    images.flatten[0..(count.to_i-1)]
+    images.flatten[0..(count.to_i-1)].to_a
   end
 
   def self.images_left(exclude_threshold)
