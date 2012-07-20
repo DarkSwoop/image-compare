@@ -10,7 +10,7 @@ class Image < ActiveRecord::Base
     id_clause = "and id not in (#{ids})" unless ids.blank?
     sources_lower_than(threshold_count).each do |source|
       break if images.size >= count.to_i
-      images << self.find_by_sql("select * from images where approved is null and source = '#{source}' and place_id not in (select distinct place_id from images where approved = true) #{id_clause} group by place_id order by id limit #{count};")
+      images << self.find_by_sql("select * from images where approved is null and url is not null and url != '' and source = '#{source}' and place_id not in (select distinct place_id from images where approved = true) #{id_clause} group by place_id order by id limit #{count};")
     end
     images.flatten[0..(count.to_i-1)].to_a
   end
