@@ -113,8 +113,9 @@ class Image < ActiveRecord::Base
     csv_parser = FasterCSV.new(csv_data, :encoding => 'u')
 
     csv_parser.each do |row|
-      urls = row[row_indeces[:urls]].to_a.split(';')
-      photo_ids = row[row_indeces[:photo_ids]].to_a.split(';')
+      urls = row[row_indeces[:urls]].to_s.split(';')
+
+      photo_ids = row[row_indeces[:photo_ids]].to_s.split(';')
       place_id = row[row_indeces[:place_id]]
       urls_with_ids = photo_ids.zip(urls)
       urls_with_ids.each do |id_url_pair|
