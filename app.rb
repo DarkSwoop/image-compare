@@ -35,6 +35,7 @@ get '/next/:count' do
 
   @images = Image.next_unapproved(params[:count], params[:ids], params[:exclude_threshold_count])
   @images.map do |image|
+    next if image.url.blank?
     image.url.sub!('http://www.qype.com/', "http://ecdn#{rand(3)}.qypecdn.net/").sub!(/(.*_)original(\.\w+)$/, '\1xlarge\2')
     image
   end
