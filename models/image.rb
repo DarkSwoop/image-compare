@@ -143,7 +143,7 @@ class Image < ActiveRecord::Base
 
   def self.export_csv_for(source)
     FasterCSV.generate do |csv|
-      self.where('approved = true').where('source = ?', source.to_s.upcase).all.each do |image|
+      self.where('approved = true').where('source = ?', source.to_s.upcase).group('place_id').all.each do |image|
         csv << image.prepared_csv_array
       end
     end
